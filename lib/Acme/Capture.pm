@@ -3,18 +3,33 @@ package Acme::Capture;
 use strict;
 use warnings;
 
-require Exporter;
+use Exporter ();
+use Capture::Tiny;
 
-our @ISA = qw(Exporter);
-our %EXPORT_TAGS = ( 'all' => [ qw(read_rdir) ] );
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-our @EXPORT = qw();
+#--------------------------------------------------------------------------#
+# create API subroutines and export them
+# [do STDOUT flag, do STDERR flag, do merge flag, do tee flag]
+#--------------------------------------------------------------------------#
 
-sub new {
-    my $pkg = shift;
+my %api = (
+  capture         => [1,1,0,0],
+  capture_stdout  => [1,0,0,0],
+  capture_stderr  => [0,1,0,0],
+  capture_merged  => [1,1,1,0],
+  tee             => [1,1,0,1],
+  tee_stdout      => [1,0,0,1],
+  tee_stderr      => [0,1,0,1],
+  tee_merged      => [1,1,1,1],
+);
 
-    bless {}, $pkg;
+for my $sub (keys %api) {
+    my $args = join q{, }, @{$api{$sub}};
+    eval "sub $sub(&;@) { unshift \@_, $args; goto \\&Capture::Tiny::_capture_tee; }"; ## no critic
 }
+
+our @ISA = qw/Exporter/;
+our @EXPORT_OK = keys %api;
+our %EXPORT_TAGS = ( 'all' => \@EXPORT_OK );
 
 1;
 
