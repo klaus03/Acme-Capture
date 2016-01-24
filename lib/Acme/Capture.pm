@@ -29,7 +29,7 @@ for my $sub (keys %api) {
 
 {
     no warnings 'redefine';
-    eval <<'EOT';
+    eval <<'EOT' or die "Can't redefine _relayer() ==> $@";
     sub Capture::Tiny::_relayer {
         my ($fh, $layers) = @_;
 
@@ -51,6 +51,8 @@ for my $sub (keys %api) {
             binmode($fh, join(":", ":raw", @unique));
         }
     };
+
+    1;
 EOT
 }
 
