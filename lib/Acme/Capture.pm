@@ -70,7 +70,18 @@ Acme::Capture - Use Capture::Tiny with a different _relayer() method
 
 =head1 SYNOPSIS
 
-  use Acme::Capture;
+    use Acme::Capture qw(capture_merged);
+
+    my $merged = capture_merged {
+        print {*STDERR} "This is STDERR\n";
+        print "==>[ABCDEFG]\n";
+        system('dir C:\\');
+        system('uvwxyz');
+    };
+
+    print "---------------------------\n";
+    print "merged = $merged\n";
+    print "\n";
 
 =head1 AUTHOR
 
