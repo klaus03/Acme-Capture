@@ -40,7 +40,7 @@ for my $sub (keys %api) {
           && $layers->[3] eq 'unix'
           && $layers->[4] eq 'encoding(utf8)' ? 1 : 0;
 
-        if ($unix_utf8_crlf and $IS_WIN32) {
+        if ($unix_utf8_crlf and $^O eq 'MSWin32') {
             binmode($fh, ':unix:encoding(utf8):crlf');
         }
         else {
